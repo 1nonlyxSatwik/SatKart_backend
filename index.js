@@ -18,12 +18,15 @@ app.use(cors({
 // ----------------------
 // MONGODB CONNECT
 // ----------------------
+mongoose.set("strictQuery", false);
+
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 })
-.then(() => console.log("MongoDB Connected"))
-.catch(err => console.log("MongoDB Error:", err));
+  .then(() => console.log("MongoDB Connected Successfully"))
+  .catch((err) => console.error("MongoDB Error:", err.message));
+
 
 // ----------------------
 // STATIC IMAGES (LOCAL ONLY)
@@ -83,6 +86,15 @@ const Product = mongoose.model("Product", {
 app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
+app.get("/testproducts", async (req, res) => {
+  try {
+    const products = await Product.find({});
+    res.json({ ok: true, count: products.length, products });
+  } catch (err) {
+    res.json({ ok: false, error: err.message });
+  }
+});
+
 
 // ----------------------
 // SIGNUP
